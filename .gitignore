@@ -1,0 +1,11 @@
+# Mai nella repo pubblica: chiavi, dati sanitari, piano e note personali
+.env
+service-account.json
+*firebase-adminsdk*.json
+data/
+.venv/
+__pycache__/
+piano.js
+firestore.rules
+CHROME.md
+chrome/

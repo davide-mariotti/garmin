@@ -1,0 +1,7 @@
+exclude:
+  - "*.py"
+  - "*.md"
+  - requirements.txt
+  - garmin-export.js
+  - check-plan.js
+  - data
