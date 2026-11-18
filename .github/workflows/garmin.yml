@@ -19,7 +19,6 @@ jobs:
       matrix:
         include:
           - { athlete: davide-mariotti, key: GARMIN_KEY_DAVIDE_MARIOTTI }
-          - { athlete: andrea-prosperi, key: GARMIN_KEY_ANDREA_PROSPERI }
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

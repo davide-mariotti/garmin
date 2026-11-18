@@ -8,17 +8,18 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#18212b">
+<meta name="theme-color" content="#050706">
 <meta name="apple-mobile-web-app-title" content="Garmin">
 <link rel="stylesheet" href="app.css">
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/i18n/langIT.js"></script>
 <script src="common.js"></script>
 <script src="auth.js"></script>
 <style>
 .an { display: grid; grid-template-columns: minmax(0, 1fr); gap: 36px; }  /* minmax: le tabelle larghe scorrono invece di allargare la pagina */
-.an h2 { margin: 0; font-size: 28px; font-weight: 800; font-stretch: 75%; line-height: 1.1; }
+.an h2 { margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -.035em; line-height: 1.1; }
 .sec-sub { margin: 4px 0 14px; color: var(--text-2); max-width: 75ch; }
-.headline { margin: 0; font-size: 40px; font-weight: 800; font-stretch: 72%; line-height: 1.08; max-width: 26ch; }
+.headline { margin: 0; font-size: 40px; font-weight: 600; letter-spacing: -.035em; line-height: 1.08; max-width: 26ch; }
 .verdict { display: grid; gap: 0; }
 .verdict article { padding: 16px 0; border-bottom: 1px solid var(--grid); display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; }
 .verdict article:first-child { padding-top: 4px; }
@@ -26,9 +27,9 @@
 .verdict h3 { font-size: 17px; font-weight: 700; margin: 0; }
 .verdict p { margin: 0; color: var(--text-2); max-width: 85ch; }
 .races { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); }
-.race h3 { font-size: 18px; font-weight: 800; font-stretch: 78%; margin: 0; line-height: 1.15; }
+.race h3 { font-size: 18px; font-weight: 600; letter-spacing: -.035em; margin: 0; line-height: 1.15; }
 .race .when { color: var(--muted); font-size: 13px; }
-.race .count b { font-size: 54px; }
+.race .count b { font-size: clamp(34px, 3.1vw, 48px); }
 .race dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; margin: 8px 0 0; font-size: 13px; }
 .race dt { color: var(--muted); } .race dd { margin: 0; font-weight: 600; }
 .r-note { margin: 10px 0 0; padding-top: 8px; border-top: 1px solid var(--grid); color: var(--text-2); font-size: 12.5px; }
@@ -37,12 +38,12 @@
 .cmp tr.grp td { background: var(--raised); font-weight: 700; font-size: 12.5px; color: var(--text-2); }
 .blocks { display: grid; gap: 16px; }
 .block-h { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; }
-.block-h .id { font-size: 30px; font-weight: 800; font-stretch: 65%; line-height: 1; }
-.block-h h3 { font-size: 20px; font-weight: 800; font-stretch: 78%; margin: 0; }
+.block-h .id { font-size: 30px; font-weight: 600; letter-spacing: -.035em; line-height: 1; }
+.block-h h3 { font-size: 20px; font-weight: 600; letter-spacing: -.035em; margin: 0; }
 .block-h .when { color: var(--muted); font-size: 13px; flex-basis: 100%; }
 .mini { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin: 12px 0; }
 .mini div { padding: 8px 10px; box-shadow: 1px 0 0 var(--border), 0 1px 0 var(--border); font-size: 12.5px; color: var(--muted); }
-.mini b { display: block; font-size: 22px; font-weight: 750; font-stretch: 70%; color: var(--text-1); }
+.mini b { display: block; font-size: 22px; font-weight: 600; letter-spacing: -.035em; color: var(--text-1); }
 .gb { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 12px 24px; }
 .gb h4 { margin: 0 0 6px; font-size: 13px; color: var(--muted); font-weight: 650; }
 .gb ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; color: var(--text-2); font-size: 14px; }
@@ -63,7 +64,6 @@
 <main class="main">
   <header class="top">
     <h1>Analisi<small id="sub"></small></h1>
-    <button class="icon-btn" id="theme" title="Tema chiaro/scuro" aria-label="Cambia tema"></button>
   </header>
   <div class="an" id="an">
     <section class="card"><p class="headline" id="headline"></p><div class="verdict" id="verdict" style="margin-top:18px"></div></section>
@@ -104,7 +104,7 @@
 const D = await garminData(), A = await garminAnalysis();
 await garminPlan();  // solo per la voce "Piano gare" nella barra laterale
 renderSidebar('analisi', (D?.activities || [])[0]?.ownerFullName, D ? `Dati del ${new Date(D.generated).toLocaleString('it-IT', { dateStyle: 'medium', timeStyle: 'short' })}` : '');
-initTheme(() => { resetCharts(); drawCharts(document.body); });
+registerTheme();
 if (!A) {
   $('#an').innerHTML = '<div class="card" style="max-width:640px"><h3>Nessuna analisi per questo atleta</h3><p class="sub" style="margin:6px 0 0">L’analisi si crea dopo almeno una gara: elenco delle gare, calcolo dei blocchi con <code>analisi.py</code> e commento scritto. Il procedimento è in <code>garmin/ANALISI.md</code>.</p></div>';
   return;
@@ -130,7 +130,7 @@ const raceLines = () => ({ silent: true, symbol: 'none', lineStyle: { color: v('
   label: { formatter: p => p.name, color: v('--muted'), fontSize: 11, position: 'insideEndTop' },
   data: A.races.map(r => ({ xAxis: r.date, name: r.name.replace('Mezza di ', '').replace('Maratona di ', 'M ') })) });
 chart('c-vo2', () => {
-  const s = lineS('VO2max', A.series.vo2max, '--s1', { symbol: 'circle', symbolSize: 6, showSymbol: true });
+  const s = lineS('VO2max', A.series.vo2max, '--accent', { symbol: 'circle', symbolSize: 6, showSymbol: true });
   s.markLine = raceLines();
   return opt({ xAxis: { type: 'time' }, yAxis: { type: 'value', scale: true }, series: [s] }, x => nf(x, 1));
 });
@@ -155,7 +155,7 @@ $('#t-eff').innerHTML = `<thead><tr><th>Periodo</th>${bands.map(b => `<th class=
 
 // volume e zone
 chart('c-weekly', () => {
-  const s = { ...BAR, name: 'Km', data: A.series.weekly, itemStyle: { ...BAR.itemStyle, color: v('--s1') } };
+  const s = { ...BAR, name: 'Km', data: A.series.weekly, itemStyle: { ...BAR.itemStyle, color: v('--accent') } };
   s.markLine = raceLines();
   return opt({ xAxis: { type: 'time' }, yAxis: { type: 'value', axisLabel: { formatter: x => x + ' km' } }, series: [s] }, x => nf(x, 1) + ' km');
 });

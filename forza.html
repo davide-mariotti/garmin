@@ -8,7 +8,7 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#18212b">
+<meta name="theme-color" content="#050706">
 <meta name="apple-mobile-web-app-title" content="Garmin">
 <link rel="stylesheet" href="app.css">
 <script src="common.js"></script>
@@ -17,13 +17,16 @@
 .why { margin: 0 0 12px; color: var(--text-2); }
 /* esercizi: nome e consiglio a sinistra, numeri a destra */
 .ex td { white-space: normal; vertical-align: top; }
+.ex th { white-space: normal; letter-spacing: .06em; }
+.ex td.num small { white-space: normal; }
+.ex th:first-child { width: 52%; }
 .ex td:first-child b { font-weight: 650; }
 .ex small { display: block; color: var(--muted); font-size: 12.5px; }
 .ex td.num { white-space: nowrap; }
 /* gif dell'esercizio (ExerciseGymGifsDB, sfondo bianco): al click si apre grande */
 .ex .gif { float: left; margin: 0 12px 4px 0; line-height: 0; }
 .ex .exn { overflow: hidden; }  /* nome e nota restano accanto alla gif, non sotto */
-.ex .gif img { width: 84px; height: 84px; object-fit: contain; background: #fff; border: 1px solid var(--border); border-radius: 8px; }
+.ex .gif img { width: 72px; height: 72px; object-fit: contain; background: #fff; border: 1px solid var(--border); border-radius: 8px; }
 /* calendario: una riga per settimana, martedì e venerdì */
 .fz { table-layout: fixed; }
 .fz th:first-child { width: 36%; }
@@ -66,7 +69,6 @@
 <main class="main">
   <header class="top">
     <h1>Forza<small>Martedì e venerdì, subito dopo la corsa · tappetino e due manubri da 10 kg · le sedute sono anche sul Forerunner</small></h1>
-    <button class="icon-btn" id="theme" title="Tema chiaro/scuro" aria-label="Cambia tema"></button>
   </header>
 
   <div class="bento">
@@ -109,7 +111,7 @@
 (async () => {
 const D = await garminData(), P = await garminPlan();
 renderSidebar('forza', (D?.activities || [])[0]?.ownerFullName, D ? `Dati del ${new Date(D.generated).toLocaleString('it-IT', { dateStyle: 'medium', timeStyle: 'short' })}` : '');
-initTheme(() => {});
+registerTheme();
 if (!P?.strength) {
   document.querySelector('.bento').innerHTML = '<div class="card s12" style="max-width:560px"><h3>Forza non disponibile</h3><p class="sub">Il programma di forza fa parte del piano, che esiste solo per la dashboard di Davide.</p></div>';
   return;

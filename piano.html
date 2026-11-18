@@ -8,15 +8,16 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#18212b">
+<meta name="theme-color" content="#050706">
 <meta name="apple-mobile-web-app-title" content="Garmin">
 <link rel="stylesheet" href="app.css">
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/i18n/langIT.js"></script>
 <script src="common.js"></script>
 <script src="auth.js"></script>
 <style>
 .race { display: flex; flex-direction: column; gap: 6px; }
-.race h2 { margin: 0; font-size: 24px; font-weight: 800; font-stretch: 75%; line-height: 1.1; }
+.race h2 { margin: 0; font-size: 24px; font-weight: 600; letter-spacing: -.035em; line-height: 1.1; }
 .race .goal { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13.5px; color: var(--text-2); }
 .race .goal b { color: var(--text-1); }
 .race p { margin: 4px 0 0; color: var(--text-2); font-size: 13.5px; }
@@ -25,7 +26,8 @@
 .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
 .zt td:first-child { font-weight: 600; }
 .sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 8px; vertical-align: -1px; }
-.big-vdot { font-size: 72px; margin: 6px 0 2px; }
+.big-vdot { font-size: 76px; margin: 10px 0 4px; }
+.big-vdot small { font: 450 12px var(--mono); letter-spacing: .1em; color: var(--muted); margin-left: 4px; }
 .form { display: grid; gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--grid); }
 .form label { display: grid; gap: 4px; font-size: 12.5px; color: var(--muted); }
 .form .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: end; }
@@ -35,8 +37,8 @@
 /* potenziali: piccolo pannello a campi, come i KPI */
 .preds { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 12px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
 .preds div { padding: 8px 10px; font-size: 12.5px; color: var(--muted); box-shadow: 1px 0 0 var(--border); }
-.preds b { display: block; font-size: 24px; font-stretch: 70%; font-weight: 750; color: var(--text-1); }
-.today .verdict { font-size: 26px; font-weight: 800; font-stretch: 75%; line-height: 1.15; margin: 10px 0 4px; }
+.preds b { display: block; font-size: 24px; font-weight: 750; color: var(--text-1); }
+.today .verdict { font-size: 26px; font-weight: 600; letter-spacing: -.035em; line-height: 1.15; margin: 10px 0 4px; }
 .today ul { margin: 12px 0 0; padding: 12px 0 0; border-top: 1px solid var(--grid); list-style: none; display: grid; gap: 6px; font-size: 13.5px; color: var(--text-2); }
 .today li b { color: var(--text-1); }
 /* settimane: le fasi sono fasce, ogni settimana una riga ben delimitata */
@@ -45,13 +47,13 @@
 .wk th:last-child, .wk td:last-child { width: 64px; }
 .wk td { vertical-align: top; padding: 12px 6px; white-space: normal; border-bottom: 1px solid var(--border); }
 .wk td:first-child { padding-left: 14px; }
-.wk .phase td { background: var(--raised); border-top: 1px solid var(--border); padding: 18px 14px 8px; font-size: 22px; font-weight: 800; font-stretch: 75%; line-height: 1.1; }
-.wk .phase span { font-size: 14px; font-weight: 450; font-stretch: 100%; color: var(--muted); margin-left: 10px; }
+.wk .phase td { background: var(--raised); border-top: 1px solid var(--border); padding: 18px 14px 8px; font-size: 22px; font-weight: 600; letter-spacing: -.035em; line-height: 1.1; }
+.wk .phase span { font-size: 14px; font-weight: 450; color: var(--muted); margin-left: 10px; }
 .wk .now td { background: color-mix(in srgb, var(--ink) 4%, var(--surface)); }
 .wk .now td:first-child { box-shadow: inset 4px 0 0 var(--ink); }
 .wk .dates { font-weight: 650; }
 .wk .focus { color: var(--muted); font-size: 12.5px; margin-top: 2px; }
-.wk td.num { font-size: 24px; font-weight: 750; font-stretch: 70%; }
+.wk td.num { font-size: 24px; font-weight: 600; letter-spacing: -.035em; }
 .pill { display: inline-block; font-size: 11.5px; font-weight: 600; color: var(--on-ink); background: var(--ink); border-radius: 999px; padding: 2px 9px; margin-top: 6px; }
 .ses { all: unset; box-sizing: border-box; display: block; width: 100%; cursor: pointer; padding: 8px 9px; border-radius: 8px; font-size: 12.5px; line-height: 1.3;
   background: color-mix(in srgb, var(--c) 10%, var(--surface)); border: 1px solid color-mix(in srgb, var(--c) 30%, transparent); border-left: 4px solid var(--c); }
@@ -77,18 +79,18 @@
 .rules { margin: 10px 0 0; padding-left: 20px; display: grid; gap: 8px; color: var(--text-2); }
 .rules b { color: var(--text-1); }
 /* obiettivo a lungo termine: tappe del passo a 145 bpm */
-.dream h2 { margin: 2px 0 0; font-size: 30px; font-weight: 800; font-stretch: 72%; line-height: 1.1; }
+.dream h2 { margin: 2px 0 0; font-size: 30px; font-weight: 600; letter-spacing: -.035em; line-height: 1.1; }
 .d-why { margin: 6px 0 0; color: var(--text-2); max-width: 80ch; }
 .d-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin: 14px 0 10px; }
 .d-steps div { padding: 10px 14px; box-shadow: 1px 0 0 var(--border), 0 1px 0 var(--border); display: flex; flex-direction: column; }
 .d-steps span { color: var(--muted); font-size: 12.5px; font-weight: 600; }
-.d-steps b { font-size: 34px; font-weight: 800; font-stretch: 65%; line-height: 1.1; }
+.d-steps b { font-size: 34px; font-weight: 600; letter-spacing: -.035em; line-height: 1.1; }
 .d-steps small { color: var(--text-2); font-size: 12.5px; }
 .d-steps .now { background: var(--raised); }
 .d-ref { margin: 0; color: var(--muted); font-size: 13px; max-width: 90ch; }
 .d-also { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; margin: 14px 0 0; }
 .d-also div { border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; }
-.d-also b { display: block; font-size: 17px; font-weight: 800; font-stretch: 80%; }
+.d-also b { display: block; font-size: 17px; font-weight: 600; letter-spacing: -.035em; }
 .d-also small { display: block; color: var(--text-2); font-size: 12.5px; margin-top: 2px; }
 /* su telefono ogni settimana diventa una scheda con il suo bordo: date in alto, sedute su due colonne col nome del giorno */
 @media (max-width: 700px) {
@@ -103,7 +105,7 @@
   .wk td, .wk td:first-child, .wk td:last-child { width: auto; padding: 0; border: 0; }
   .wk td:first-child { grid-column: 1 / -1; }
   .wk td:empty { display: none; }
-  .wk td[data-day]::before { content: attr(data-day); display: block; color: var(--muted); font-size: 11.5px; font-weight: 600; font-stretch: 100%; margin-bottom: 3px; }
+  .wk td[data-day]::before { content: attr(data-day); display: block; color: var(--muted); font-size: 11.5px; font-weight: 600; margin-bottom: 3px; }
   .wk td.num { text-align: left; }
   .wk tr.now { border-color: var(--ink); box-shadow: inset 4px 0 0 var(--ink); }
   .wk .now td, .wk .now td:first-child { background: none; box-shadow: none; }
@@ -124,7 +126,6 @@
 <main class="main">
   <header class="top">
     <h1>Piano gare<small>Firenze → Massa → Firenze → Pisa · 4 sedute a settimana, ritmi calibrati sui tuoi dati</small></h1>
-    <button class="icon-btn" id="theme" title="Tema chiaro/scuro" aria-label="Cambia tema"></button>
   </header>
 
   <div class="bento">
@@ -239,7 +240,7 @@ function zonesTable() {
 const HM_GOALS = [6240, 6180, 6120, 6060, 6000, 5940, 5880, 5820, 5760, 5700];  // 1:44 … 1:35
 function calibration() {
   const c = P.calib();
-  $('#vdot').innerHTML = `${nf(c.vdot, 1)} <small style="font-size:14px;font-weight:500;color:var(--text-2)">VDOT</small>`;
+  $('#vdot').innerHTML = `${nf(c.vdot, 1)} <small>VDOT</small>`;
   $('#cal-src').textContent = `Da: ${c.vdotSource}`;
   $('#preds').innerHTML = [['10 km', 10000], ['Mezza', 21097.5], ['32 km', 32000]].map(([l, m]) => `<div><b>${clock(P.raceTime(c.vdot, m))}</b>${l} potenziale</div>`).join('');
   $('#hm-goal').innerHTML = HM_GOALS.map(s => `<option value="${s}"${s === c.hmGoal ? ' selected' : ''}>${clock(s)} · ${clock(s / 21.0975)}/km · serve VDOT ${nf(P.vdotFrom(21097.5, s), 1)}</option>`).join('');
@@ -383,7 +384,7 @@ function render() {
   drawCharts(document.body);
 }
 renderSidebar('piano', (D?.activities || [])[0]?.ownerFullName, D ? `Dati del ${new Date(D.generated).toLocaleString('it-IT', { dateStyle: 'medium', timeStyle: 'short' })}` : '');
-initTheme(() => { resetCharts(); render(); });
+registerTheme();
 render();
 const deep = location.hash.match(/^#s-(.+)$/);
 if (deep) openSession(deep[1]);

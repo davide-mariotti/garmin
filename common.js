@@ -1,4 +1,4 @@
-// Condiviso da dashboard.html, piano.html, analisi.html e wiki.html: formattazione, tema, sidebar, helper ECharts.
+// Condiviso da dashboard.html, piano.html, forza.html, analisi.html e wiki.html: formattazione, sidebar, tema dei grafici, helper ECharts.
 
 // ---------- utilità ----------
 const v = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
@@ -49,18 +49,19 @@ const ICONS = {
   forza: '<path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m2 6 4-4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/>',
   wiki: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V2H6.5A2.5 2.5 0 0 0 4 4.5Z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/>',
   analisi: '<path d="m3 17 6-6 4 4 8-8"/><path d="M14 7h7v7"/>',
-  theme: '<circle cx="12" cy="12" r="9"/><path d="M12 3v18" /><path d="M12 3a9 9 0 0 1 0 18Z" fill="currentColor"/>',
   close: '<path d="M18 6 6 18M6 6l12 12"/>',
   ext: '<path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
 };
 const icon = name => `<svg class="ico" viewBox="0 0 24 24">${ICONS[name]}</svg>`;
+// logo dm. del sito: tratti chiari, il puntino è l'unico verde
+const LOGO = '<svg class="logo" viewBox="7.5 12.5 108.8 68" role="img" aria-label="dm."><path d="M45,20V73M45,58A15,15 0 1 1 45,57.99M45,54A11,11 0 0 1 67,54V73M67,54A11,11 0 0 1 89,54V73" fill="none" stroke="#ecf3ee" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/><circle cx="107.7" cy="71.9" r="6.6" fill="#2fe37f"/></svg>';
 const VIEWS = [['panoramica', 'Panoramica'], ['allenamento', 'Allenamento'], ['corsa', 'Corsa'], ['sonno', 'Sonno'], ['recupero', 'Recupero e stress'], ['movimento', 'Movimento'], ['corpo', 'Corpo']];
 // page: 'dashboard', 'piano', 'forza', 'analisi' o 'wiki'
 function renderSidebar(page, who, foot) {
   const base = page === 'dashboard' ? '' : 'dashboard.html' + location.search;
   const link = (id, label) => `<a href="${id}.html${location.search}" data-view="${id}"${page === id ? ' class="active"' : ''}>${icon(id)}${label}</a>`;
   $('#side').innerHTML = `
-    <a class="brand" href="index.html" title="Tutti gli atleti"><img class="logo" src="https://davide-mariotti.github.io/favicon.svg" alt=""><span>Garmin<small>${esc(who || '')}</small></span></a>
+    <a class="brand" href="index.html" title="Tutti gli atleti">${LOGO}<span>Garmin<small>${esc(who || '')}</small></span></a>
     <nav class="nav">
       ${VIEWS.map(([id, label]) => `<a href="${base}#${id}" data-view="${id}">${icon(id)}${label}</a>`).join('')}
       <div class="sep"></div>
@@ -76,34 +77,23 @@ function renderSidebar(page, who, foot) {
 // su telefono la barra scorre in orizzontale: porta in vista la voce attiva
 const revealNav = () => { const a = $('.nav a.active'); if (a) $('#side').scrollLeft = a.offsetLeft - 64; };
 
-// ---------- tema ----------
-function initTheme(onChange) {
-  const saved = store.get('theme');
-  if (saved) document.documentElement.dataset.theme = saved;
-  $('#theme').innerHTML = icon('theme');
-  $('#theme').addEventListener('click', () => {
-    const dark = matchMedia('(prefers-color-scheme: dark)').matches;
-    const cur = document.documentElement.dataset.theme || (dark ? 'dark' : 'light');
-    document.documentElement.dataset.theme = cur === 'dark' ? 'light' : 'dark';
-    store.set('theme', document.documentElement.dataset.theme);
-    registerTheme(); onChange();
-  });
-  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { registerTheme(); onChange(); });
-  registerTheme();
-}
-
 // ---------- ECharts ----------
-// Archivo, da app.css; in Node (check-plan.js, garmin-export.js) non c'è il DOM
+// Geist, da app.css; in Node (check-plan.js, garmin-export.js) non c'è il DOM
 const FONT = (typeof getComputedStyle === 'function' && getComputedStyle(document.documentElement).getPropertyValue('--font').trim()) || 'system-ui, sans-serif';
+const MONO = (typeof getComputedStyle === 'function' && getComputedStyle(document.documentElement).getPropertyValue('--mono').trim()) || 'monospace';
+// tema unico (scuro, come il sito): assi in Geist Mono, griglia appena visibile, tooltip vetro scuro
 function registerTheme() {
-  if (!window.echarts) return;  // wiki.html non ha grafici
-  const ax = { axisLine: { lineStyle: { color: v('--axis') } }, axisTick: { show: false }, axisLabel: { color: v('--muted'), hideOverlap: true }, splitLine: { lineStyle: { color: v('--grid') } }, nameTextStyle: { color: v('--muted') } };
+  if (!window.echarts) return;  // wiki.html e forza.html non hanno grafici
+  const lbl = { color: v('--muted'), fontFamily: MONO, fontSize: 10.5 };
+  const ax = { axisLine: { lineStyle: { color: v('--axis') } }, axisTick: { show: false }, axisLabel: { ...lbl, hideOverlap: true }, splitLine: { lineStyle: { color: v('--grid') } }, nameTextStyle: lbl };
   echarts.registerTheme('g', {
     color: ['--s1', '--s2', '--s3', '--s4', '--s5', '--s7', '--s8'].map(v),
     backgroundColor: 'transparent',
-    textStyle: { fontFamily: FONT },
-    legend: { textStyle: { color: v('--text-2') } },
-    tooltip: { backgroundColor: v('--raised'), borderColor: v('--border'), textStyle: { color: v('--text-1'), fontSize: 12 }, extraCssText: 'border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.14)' },
+    textStyle: { fontFamily: FONT, color: v('--text-2') },
+    legend: { textStyle: { color: v('--text-2'), fontSize: 12 }, pageIconColor: v('--accent'), pageIconInactiveColor: v('--faint'), pageTextStyle: lbl },
+    tooltip: { backgroundColor: 'rgba(17,23,20,.94)', borderColor: v('--line-strong'), borderWidth: 1, padding: [9, 12], textStyle: { color: v('--text-1'), fontSize: 12, fontFamily: FONT },
+      extraCssText: 'border-radius:12px;box-shadow:0 16px 40px -10px rgba(0,0,0,.7);backdrop-filter:blur(10px)' },
+    toolbox: { iconStyle: { borderColor: v('--faint') }, emphasis: { iconStyle: { borderColor: v('--accent'), textFill: v('--text-2') } } },
     categoryAxis: { ...ax, splitLine: { show: false } },
     valueAxis: { ...ax, axisLine: { show: false } },
     timeAxis: { ...ax, splitLine: { show: false } },
@@ -118,12 +108,12 @@ function opt(o, fmt = x => nf(x, 1)) {
   const named = (o.series || []).filter(s => s.name && !s.name.startsWith('_')).map(s => s.name);
   return {
     grid: { left: 4, right: 14, top: named.length > 1 ? 38 : 22, bottom: 4, containLabel: true },
-    tooltip: { trigger: 'axis', formatter: tipAxis(fmt), axisPointer: { type: 'line', lineStyle: { color: v('--axis') } } },
-    legend: { show: named.length > 1, type: 'scroll', top: 0, left: 0, width: '85%', icon: 'roundRect', itemWidth: 10, itemHeight: 10, data: named },  // il 15% a destra resta alla toolbox
+    tooltip: { trigger: 'axis', formatter: tipAxis(fmt), axisPointer: { type: 'line', lineStyle: { color: 'rgba(47,227,127,.45)' } } },
+    legend: { show: named.length > 1, type: 'scroll', top: 0, left: 0, width: '85%', icon: 'roundRect', itemWidth: 10, itemHeight: 10, itemGap: 14, data: named },  // il 15% a destra resta alla toolbox
     toolbox: {
       right: 0, top: -2, itemSize: 13,
       feature: {
-        dataView: { readOnly: true, title: 'Tabella', lang: ['Dati', 'Chiudi', 'Aggiorna'], backgroundColor: v('--surface'), textColor: v('--text-1'), textareaColor: v('--surface'), textareaBorderColor: v('--border'), buttonColor: v('--s1') },
+        dataView: { readOnly: true, title: 'Tabella', lang: ['Dati', 'Chiudi', 'Aggiorna'], backgroundColor: v('--surface'), textColor: v('--text-1'), textareaColor: v('--surface'), textareaBorderColor: v('--border'), buttonColor: v('--accent'), buttonTextColor: v('--on-ink') },
         saveAsImage: { title: 'Salva PNG', backgroundColor: v('--surface') },
       },
     },
@@ -137,7 +127,9 @@ const stack = (names, colors, rows) => names.map((n, i) => ({
   itemStyle: { color: v(colors[i]), borderColor: v('--surface'), borderWidth: rows[0].length > 60 ? 0 : 1, borderRadius: i === names.length - 1 ? [4, 4, 0, 0] : 0 },
 }));
 const lineS = (name, data, color = '--s1', extra = {}) => ({ type: 'line', name, data, connectNulls: true, itemStyle: { color: v(color) }, lineStyle: { color: v(color), width: 2 }, ...extra });
-const area = color => ({ areaStyle: { color: v(color), opacity: .1 } });
+// sfumatura sotto la linea, dal colore della serie al trasparente
+const alpha = (hex, a) => { const n = parseInt(hex.replace('#', ''), 16); return `rgba(${n >> 16},${n >> 8 & 255},${n & 255},${a})`; };
+const area = color => ({ areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: alpha(v(color), .3) }, { offset: 1, color: alpha(v(color), 0) }] } } });
 
 // registro grafici: ogni pagina registra builder (id -> opzioni|null) e li disegna quando servono
 const CHARTS = {};
@@ -154,13 +146,17 @@ function drawCharts(root, reinit = false) {
     if (!o) continue;
     if (reinit) echarts.getInstanceByDom(el)?.dispose();
     const { onClick, ...option } = o;
-    const c = echarts.getInstanceByDom(el) || echarts.init(el, 'g');
+    const c = echarts.getInstanceByDom(el) || echarts.init(el, 'g', { locale: 'IT' });
     c.setOption(option, true);
     c.off('click');
     if (onClick) c.on('click', onClick);
     c.resize();
   }
 }
-const resetCharts = () => document.querySelectorAll('[_echarts_instance_]').forEach(el => echarts.getInstanceByDom(el)?.dispose());
-const isDark = () => (document.documentElement.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')) === 'dark';
 addEventListener('resize', () => document.querySelectorAll('[_echarts_instance_]').forEach(el => echarts.getInstanceByDom(el)?.resize()));
+// luce che segue il puntatore sulle card, come .spot sul sito (--x, --y in app.css)
+if (typeof addEventListener === 'function') addEventListener('pointermove', e => {
+  const c = e.target.closest?.('.card, .kpis'); if (!c) return;
+  const r = c.getBoundingClientRect();
+  c.style.setProperty('--x', `${e.clientX - r.left}px`); c.style.setProperty('--y', `${e.clientY - r.top}px`);
+}, { passive: true });

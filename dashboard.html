@@ -9,55 +9,70 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#18212b">
+<meta name="theme-color" content="#050706">
 <meta name="apple-mobile-web-app-title" content="Garmin">
 <link rel="stylesheet" href="app.css">
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/i18n/langIT.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="common.js"></script>
 <script src="auth.js"></script>
 <style>
 #kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: 1fr; }  /* le due righe riempiono l'altezza del pettorale accanto */
 @media (max-width: 700px) { #kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* prossima gara: pettorale con il countdown verde */
 .hero { display: flex; flex-direction: column; gap: 4px; }
-.hero h2 { margin: 0; font-size: 24px; font-weight: 800; font-stretch: 75%; line-height: 1.1; }
-.next { display: block; margin-top: auto; padding: 12px 14px; border-radius: 10px; background: var(--raised); border: 1px solid var(--border); text-decoration: none; color: var(--text-1); }
-.next:hover { border-color: var(--axis); }
-.next b { display: block; font-size: 16px; margin-top: 2px; }
+.hero h2 { margin: 6px 0 0; font-size: 26px; font-weight: 600; letter-spacing: -.035em; line-height: 1.1; }
+.hero .sub { margin: 0; }
+.next { display: block; margin-top: auto; padding: 13px 15px; border-radius: 14px; background: rgba(47,227,127,.06); border: 1px solid rgba(47,227,127,.2); text-decoration: none; color: var(--text-1); transition: border-color .25s, background .25s; }
+.next:hover { border-color: rgba(47,227,127,.45); background: rgba(47,227,127,.1); text-decoration: none; }
+.next b { display: block; font-size: 16px; font-weight: 600; margin-top: 4px; }
 .next span:last-child { color: var(--muted); font-size: 13px; }
-.row-h { display: flex; align-items: baseline; justify-content: space-between; margin: 8px 2px 10px; }
-.row-h h3 { margin: 0; font-size: 22px; font-weight: 800; font-stretch: 75%; }
-.strip { display: grid; gap: 12px; grid-auto-flow: column; grid-auto-columns: minmax(210px, 1fr); overflow-x: auto; padding-bottom: 6px; scroll-snap-type: x mandatory; }
+.hero > a:last-child { margin-top: 10px; font-size: 13px; }
+.row-h { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 22px 2px 12px; }
+.row-h h3 { margin: 0; font-size: 24px; font-weight: 600; letter-spacing: -.035em; }
+.row-h a { font-size: 13.5px; }
+/* ultime attività: card in fila che scorrono */
+.strip { display: grid; gap: 12px; grid-auto-flow: column; grid-auto-columns: minmax(214px, 1fr); overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x mandatory; scrollbar-width: thin; }
 .strip > * { scroll-snap-align: start; }
-.act { all: unset; box-sizing: border-box; cursor: pointer; display: flex; flex-direction: column; gap: 3px; padding: 14px 16px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); min-width: 0; }
-.act:hover { border-color: var(--axis); }
-.act:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-.act .nm { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.act { all: unset; box-sizing: border-box; cursor: pointer; display: flex; flex-direction: column; gap: 4px; padding: 16px 18px; border-radius: 18px; min-width: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.01)), var(--surface); border: 1px solid var(--border); transition: border-color .3s, transform .4s var(--ease); }
+.act:hover { border-color: rgba(47,227,127,.3); transform: translateY(-2px); }
+.act:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.act .nm { font-weight: 600; margin-top: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .act .when { color: var(--muted); font-size: 12.5px; }
-.act .big { font-size: 34px; font-weight: 750; font-stretch: 70%; line-height: 1; margin-top: 8px; }
-.act .big small { font-size: 14px; color: var(--muted); font-weight: 550; font-stretch: 100%; }
+.act .big { font-size: 36px; font-weight: 600; letter-spacing: -.045em; line-height: 1; margin-top: 12px; }
+.act .big small { font: 450 12px var(--mono); letter-spacing: 0; color: var(--muted); margin-left: 4px; }
 .act .meta { color: var(--text-2); font-size: 13px; }
 .card-h { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
-.big-n { font-size: 64px; margin: 4px 0 6px; }
-.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--grid); }
-.facts div { color: var(--muted); font-size: 12.5px; }
-.facts b { display: block; color: var(--text-1); font-size: 17px; font-weight: 650; }
-#d-map { height: 320px; border-radius: 14px; border: 1px solid var(--border); z-index: 0; }
-.zbar { display: flex; height: 14px; border-radius: 7px; overflow: hidden; gap: 2px; }
-.zleg { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 10px; font-size: 12.5px; color: var(--text-2); }
-.lapbar { height: 6px; border-radius: 3px; background: var(--s1); min-width: 2px; }
+.card-h input { min-width: 220px; }
+.big-n { font-size: 72px; margin: 10px 0 8px; }
+.big-n small { font: 450 13px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--grid); }
+.facts div { font: 450 10.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.facts b { display: block; font: 600 20px var(--font); letter-spacing: -.03em; text-transform: none; color: var(--text-1); margin-bottom: 2px; }
+/* dettaglio attività */
+#d-map { height: 340px; border-radius: var(--r); border: 1px solid var(--border); z-index: 0; background: var(--surface); }
+.leaflet-container { font-family: var(--font); }
+.leaflet-control-attribution { background: rgba(5,7,6,.7) !important; color: var(--faint) !important; }
+.leaflet-control-attribution a { color: var(--muted) !important; }
+.zbar { display: flex; height: 12px; border-radius: 6px; overflow: hidden; gap: 2px; }
+.zleg { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 12px; font-size: 12.5px; color: var(--text-2); }
+.lapbar { height: 6px; border-radius: 3px; background: var(--accent); min-width: 2px; box-shadow: 0 0 10px -2px rgba(47,227,127,.6); }
 tr.rest td { color: var(--muted); }
+tr.rest .lapbar { box-shadow: none; }
 .m-when { display: none; }
-.empty { max-width: 640px; margin: 80px auto; padding: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; }
+.empty { max-width: 640px; margin: 80px auto; }
 @media (max-width: 600px) {
-  .strip { grid-auto-columns: minmax(180px, 62%); }
-  .card-h input { flex: 1 1 100%; }
+  .strip { grid-auto-columns: minmax(180px, 64%); }
+  .card-h input { flex: 1 1 100%; min-width: 0; }
   /* su telefono restano nome (con la data sotto), km, ritmo e FC: il resto è nel dettaglio */
   #t-acts :is(th, td):is(:nth-child(1), :nth-child(4), :nth-child(n+7)) { display: none; }
   #t-acts td.name { max-width: 130px; }
-  #t-acts .m-when { display: block; margin-left: 14px; color: var(--muted); font-size: 11.5px; }
-  #t-acts :is(th, td) { padding: 7px 5px; }
+  #t-acts .m-when { display: block; margin-left: 15px; color: var(--muted); font-size: 11.5px; }
+  #t-acts :is(th, td) { padding: 8px 5px; }
   #d-map { height: 240px; }
+  .big-n { font-size: 60px; }
 }
 </style>
 </head>
@@ -70,7 +85,6 @@ tr.rest td { color: var(--muted); }
     <div class="seg" id="range" role="group" aria-label="Periodo">
       <button data-d="30">30g</button><button data-d="90">90g</button><button data-d="180">6m</button><button data-d="365">1a</button><button data-d="all">Tutto</button>
     </div>
-    <button class="icon-btn" id="theme" title="Tema chiaro/scuro" aria-label="Cambia tema"></button>
   </header>
 
   <section class="view" data-view="panoramica">
@@ -159,7 +173,7 @@ tr.rest td { color: var(--muted); }
 (async () => {
 const D = await garminData();
 if (!D) {
-  document.getElementById('app').innerHTML = `<div class="empty"><h3>Nessun dato</h3><p>Esegui <code>.venv\\Scripts\\python fetch.py --athlete ${esc(ATHLETE)}</code> per scaricare i dati in <code>data/${esc(ATHLETE)}/</code>, poi ricarica questa pagina.</p></div>`;
+  document.getElementById('app').innerHTML = `<div class="empty card"><h3>Nessun dato</h3><p>Esegui <code>.venv\\Scripts\\python fetch.py --athlete ${esc(ATHLETE)}</code> per scaricare i dati in <code>data/${esc(ATHLETE)}/</code>, poi ricarica questa pagina.</p></div>`;
   return;
 }
 await garminPlan();
@@ -255,8 +269,8 @@ chart('c-hrvnight', () => {
   return opt({
     tooltip: { trigger: 'axis', formatter: tipAxis(x => x + ' ms') },
     xAxis: { type: 'time', axisLabel: { formatter: '{HH}:{mm}' } }, yAxis: { type: 'value' },
-    series: [lineS('HRV', h.hrvReadings.map(r => [r.readingTimeLocal, r.hrvValue]), '--s7', {
-      markArea: s.baseline && { silent: true, itemStyle: { color: v('--s3'), opacity: .12 }, data: [[{ yAxis: s.baseline.balancedLow }, { yAxis: s.baseline.balancedUpper }]] },
+    series: [lineS('HRV', h.hrvReadings.map(r => [r.readingTimeLocal, r.hrvValue]), '--accent', {
+      markArea: s.baseline && { silent: true, itemStyle: { color: v('--accent'), opacity: .08 }, data: [[{ yAxis: s.baseline.balancedLow }, { yAxis: s.baseline.balancedUpper }]] },
     })],
   });
 });
@@ -347,7 +361,7 @@ chart('c-pace', () => {
   return opt({
     tooltip: { trigger: 'item', formatter: p => { const a = p.data.a; return `${fmtDay(a.day)}<div class="tt"><b>${clock(p.value[1])} /km</b><span>${nf(a.distance / 1000, 1)} km · FC ${nf(a.averageHR)}</span></div><span style="color:${v('--muted')}">${esc(a.activityName)}</span>`; } },
     xAxis: { type: 'time' }, yAxis: { type: 'value', inverse: true, scale: true, axisLabel: { formatter: clock } },
-    series: [{ type: 'scatter', cursor: 'pointer', data: runs.map(a => ({ value: [a.day, Math.round(1000 / a.averageSpeed)], a })), symbolSize: (_, p) => Math.min(22, 7 + Math.sqrt(p.data.a.distance / 1000) * 2.2), itemStyle: { color: v('--s1'), opacity: .85, borderColor: v('--surface'), borderWidth: 2 } }],
+    series: [{ type: 'scatter', cursor: 'pointer', data: runs.map(a => ({ value: [a.day, Math.round(1000 / a.averageSpeed)], a })), symbolSize: (_, p) => Math.min(22, 7 + Math.sqrt(p.data.a.distance / 1000) * 2.2), itemStyle: { color: v('--accent'), opacity: .85, borderColor: v('--surface'), borderWidth: 2 } }],
     onClick: p => openActivity(p.data.a.activityId),
   });
 });
@@ -359,8 +373,8 @@ const dyn = (id, key, d = 0) => chart(id, () => {
     grid: { left: 4, right: 10, top: 10, bottom: 4, containLabel: true },
     xAxis: { type: 'time', axisLabel: { formatter: '{dd}/{MM}' } }, yAxis: { type: 'value', scale: true },
     series: [
-      { type: 'scatter', name: '_', cursor: 'pointer', data: pts, symbolSize: 7, itemStyle: { color: v('--s1'), borderColor: v('--surface'), borderWidth: 1.5 } },
-      lineS('media mobile', rolling(pts.map(p => p.value[1]), 8).map((y, i) => [pts[i].value[0], +y.toFixed(d)]), '--s2'),
+      { type: 'scatter', name: '_', cursor: 'pointer', data: pts, symbolSize: 7, itemStyle: { color: v('--accent'), opacity: .8, borderColor: v('--surface'), borderWidth: 1.5 } },
+      lineS('media mobile', rolling(pts.map(p => p.value[1]), 8).map((y, i) => [pts[i].value[0], +y.toFixed(d)]), '--ref', { lineStyle: { color: v('--ref'), width: 1.5 } }),
     ],
     tooltip: { trigger: 'item', formatter: p => `${fmtDay(p.value[0])}<div class="tt"><i style="background:${p.color}"></i><b>${nf(p.value[1], d)}</b><span>${p.seriesName === '_' ? esc(p.data.a.activityName) : p.seriesName}</span></div>` },
     onClick: p => p.data?.a && openActivity(p.data.a.activityId),
@@ -381,7 +395,7 @@ chart('c-sscore', () => {
   const s = col(SLP, x => x.sleepScores?.overall?.value); if (!s.some(x => x != null)) return null;
   const [, q] = last(SLP, x => x.sleepScores?.overall?.qualifierKey);
   note('c-sscore', `Ultima notte: ${QUAL[q] || q || '–'} · ${per()} ${nf(avg(s))}`);
-  return opt({ xAxis: dayAxis(), yAxis: { type: 'value', min: e => Math.max(0, Math.floor(e.min / 10) * 10 - 10), max: 100 }, series: [lineS('Punteggio', s, '--s7', area('--s7')), lineS('Media 7 notti', rolling(s, 7).map(x => x && Math.round(x)), '--s4')] }, x => nf(x));
+  return opt({ xAxis: dayAxis(), yAxis: { type: 'value', min: e => Math.max(0, Math.floor(e.min / 10) * 10 - 10), max: 100 }, series: [lineS('Punteggio', s, '--accent', area('--accent')), lineS('Media 7 notti', rolling(s, 7).map(x => x && Math.round(x)), '--ref', { lineStyle: { color: v('--ref'), width: 1.5 } })] }, x => nf(x));
 });
 chart('c-stimes', () => {
   // ore dalle 18:00 (i timestamp "locali" di Garmin vanno letti come UTC)
@@ -404,14 +418,14 @@ chart('c-sneed', () => {
   const slept = col(SLP, s => s.sleepTimeSeconds ? +(s.sleepTimeSeconds / 3600).toFixed(2) : null);
   const need = col(SLP, s => s.sleepNeed?.actual ? +(s.sleepNeed.actual / 60).toFixed(2) : null);
   if (!slept.some(x => x != null)) return null;
-  return opt({ xAxis: dayAxis(), yAxis: { type: 'value', axisLabel: { formatter: x => x + 'h' } }, series: [{ ...BAR, name: 'Dormito', data: slept, itemStyle: { ...BAR.itemStyle, color: v('--s1') } }, lineS('Necessario', need, '--s2', { step: 'middle' })] }, x => hm(x * 3600));
+  return opt({ xAxis: dayAxis(), yAxis: { type: 'value', axisLabel: { formatter: x => x + 'h' } }, series: [{ ...BAR, name: 'Dormito', data: slept, itemStyle: { ...BAR.itemStyle, color: v('--accent') } }, lineS('Necessario', need, '--ref', { step: 'middle', lineStyle: { color: v('--ref'), width: 1.5 } })] }, x => hm(x * 3600));
 });
 const dayLine = (id, map, f, color, fmt = x => nf(x, 1)) => chart(id, () => {
   const s = col(map, f); if (!s.some(x => x != null)) return null;
-  return opt({ grid: { left: 4, right: 10, top: 10, bottom: 4, containLabel: true }, xAxis: dayAxis(), yAxis: { type: 'value', scale: true }, series: [lineS('_', s, color, area(color)), lineS('media 7 giorni', rolling(s, 7), '--s2', { lineStyle: { color: v('--s2'), width: 1.5 } })] }, fmt);
+  return opt({ grid: { left: 4, right: 10, top: 10, bottom: 4, containLabel: true }, xAxis: dayAxis(), yAxis: { type: 'value', scale: true }, series: [lineS('_', s, color, area(color)), lineS('media 7 giorni', rolling(s, 7), '--ref', { lineStyle: { color: v('--ref'), width: 1.5 } })] }, fmt);
 });
 dayLine('c-shr', SLP, s => s.avgHeartRate, '--s8', x => nf(x) + ' bpm');
-dayLine('c-sresp', SLP, s => s.averageRespirationValue, '--s3');
+dayLine('c-sresp', SLP, s => s.averageRespirationValue, '--accent');
 dayLine('c-sstress', SLP, s => s.avgSleepStress, '--s4', x => nf(x));
 
 // ---------- Recupero ----------
@@ -419,19 +433,19 @@ chart('c-hrv', () => {
   const night = col(HRV, h => h.lastNightAvg); if (!night.some(x => x != null)) return null;
   const lo = col(HRV, h => h.baseline?.balancedLow), up = col(HRV, h => h.baseline?.balancedUpper);
   return opt({
-    tooltip: { trigger: 'axis', formatter: ps => { const i = ps[0].dataIndex, h = HRV[DAYS[i]]; return fmtDay(DAYS[i]) + (h ? `<div class="tt"><i style="background:${v('--s1')}"></i><b>${nf(h.lastNightAvg)} ms</b><span>notte</span></div><div class="tt"><i style="background:${v('--s2')}"></i><b>${nf(h.weeklyAvg)} ms</b><span>media 7 giorni</span></div><div class="tt"><span>range bilanciato ${nf(lo[i])}–${nf(up[i])} · ${esc((HRV_STATUS[h.status] || [h.status])[0])}</span></div>` : ''); } },
+    tooltip: { trigger: 'axis', formatter: ps => { const i = ps[0].dataIndex, h = HRV[DAYS[i]]; return fmtDay(DAYS[i]) + (h ? `<div class="tt"><i style="background:${v('--accent')}"></i><b>${nf(h.lastNightAvg)} ms</b><span>notte</span></div><div class="tt"><i style="background:${v('--ref')}"></i><b>${nf(h.weeklyAvg)} ms</b><span>media 7 giorni</span></div><div class="tt"><span>range bilanciato ${nf(lo[i])}–${nf(up[i])} · ${esc((HRV_STATUS[h.status] || [h.status])[0])}</span></div>` : ''); } },
     xAxis: dayAxis(), yAxis: { type: 'value', scale: true },
     series: [
       { type: 'line', name: '_lo', stack: 'band', data: lo, symbol: 'none', lineStyle: { opacity: 0 }, connectNulls: true },
-      { type: 'line', name: 'Range bilanciato', stack: 'band', data: up.map((u, i) => u != null && lo[i] != null ? u - lo[i] : null), symbol: 'none', lineStyle: { opacity: 0 }, itemStyle: { color: v('--s3') }, areaStyle: { color: v('--s3'), opacity: .14 }, connectNulls: true },
-      lineS('Notte', night, '--s1', { symbol: 'circle', symbolSize: 5, showSymbol: DAYS.length <= 90 }),
-      lineS('Media 7 giorni', col(HRV, h => h.weeklyAvg), '--s2'),
+      { type: 'line', name: 'Range bilanciato', stack: 'band', data: up.map((u, i) => u != null && lo[i] != null ? u - lo[i] : null), symbol: 'none', lineStyle: { opacity: 0 }, itemStyle: { color: v('--accent') }, areaStyle: { color: v('--accent'), opacity: .08 }, connectNulls: true },
+      lineS('Notte', night, '--accent', { symbol: 'circle', symbolSize: 5, showSymbol: DAYS.length <= 90, itemStyle: { color: v('--accent'), borderColor: v('--surface'), borderWidth: 1 } }),
+      lineS('Media 7 giorni', col(HRV, h => h.weeklyAvg), '--ref', { lineStyle: { color: v('--ref'), width: 1.5 } }),
     ],
   });
 });
 chart('c-rhr', () => {
   const r = col(SUM, s => s.heartRate?.restingValue); if (!r.some(x => x != null)) return null;
-  return opt({ xAxis: dayAxis(), yAxis: { type: 'value', scale: true }, series: [lineS('Riposo', r, '--s8', area('--s8')), lineS('Media 7 giorni', rolling(r, 7).map(x => x && +x.toFixed(1)), '--s1')] }, x => nf(x, 1) + ' bpm');
+  return opt({ xAxis: dayAxis(), yAxis: { type: 'value', scale: true }, series: [lineS('Riposo', r, '--s8', area('--s8')), lineS('Media 7 giorni', rolling(r, 7).map(x => x && +x.toFixed(1)), '--ref', { lineStyle: { color: v('--ref'), width: 1.5 } })] }, x => nf(x, 1) + ' bpm');
 });
 chart('c-bb', () => {
   const mn = col(SUM, s => s.bodyBattery?.minValue), mx = col(SUM, s => s.bodyBattery?.maxValue);
@@ -441,7 +455,7 @@ chart('c-bb', () => {
     xAxis: dayAxis(), yAxis: { type: 'value', min: 0, max: 100 },
     series: [
       { type: 'bar', name: '_base', stack: 'b', data: mn, itemStyle: { color: 'transparent' }, emphasis: { disabled: true } },
-      { type: 'bar', name: '_rng', stack: 'b', barMaxWidth: 14, data: mx.map((x, i) => x != null && mn[i] != null ? x - mn[i] : null), itemStyle: { color: v('--s1'), borderRadius: 4 } },
+      { type: 'bar', name: '_rng', stack: 'b', barMaxWidth: 14, data: mx.map((x, i) => x != null && mn[i] != null ? x - mn[i] : null), itemStyle: { color: v('--accent'), borderRadius: 4 } },
     ],
   });
 });
@@ -452,14 +466,14 @@ chart('c-stress', () => {
   return opt({ xAxis: dayAxis(), yAxis: { type: 'value', axisLabel: { formatter: x => x + 'h' } }, series: stack(['Riposo', 'Basso', 'Medio', 'Alto'], ['--s1', '--st1', '--st2', '--st3'], rows) }, x => hm(x * 3600));
 });
 dayLine('c-stresslvl', SUM, stressLvl, '--st2', x => nf(x));
-dayLine('c-resp', SUM, s => s.respiration?.avgValue, '--s3');
+dayLine('c-resp', SUM, s => s.respiration?.avgValue, '--accent');
 
 // ---------- Movimento ----------
 chart('c-steps', () => {
   const s = col(SUM, x => x.movement?.steps?.value), g = col(SUM, x => x.movement?.steps?.goal);
   if (!s.some(x => x != null)) return null;
   note('c-steps', `Media ${nf(avg(s.slice(0, -1)))} al giorno · sopra l'obiettivo ${s.filter((x, i) => x != null && g[i] && x >= g[i]).length} giorni su ${s.filter(x => x != null).length}`);
-  return opt({ xAxis: dayAxis(), yAxis: { type: 'value', axisLabel: { formatter: x => x >= 1000 ? x / 1000 + 'k' : x } }, series: [{ ...BAR, name: 'Passi', data: s, itemStyle: { ...BAR.itemStyle, color: v('--s1') } }, lineS('Obiettivo', g, '--s2', { step: 'middle', lineStyle: { color: v('--s2'), width: 1.5 } })] }, x => nf(x));
+  return opt({ xAxis: dayAxis(), yAxis: { type: 'value', axisLabel: { formatter: x => x >= 1000 ? x / 1000 + 'k' : x } }, series: [{ ...BAR, name: 'Passi', data: s, itemStyle: { ...BAR.itemStyle, color: v('--accent') } }, lineS('Obiettivo', g, '--ref', { step: 'middle', lineStyle: { color: v('--ref'), width: 1.5 } })] }, x => nf(x));
 });
 chart('c-intensity', () => {
   const weeks = []; for (let w = monday(DAYS[0]); w <= TODAY; w = addDays(w, 7)) weeks.push(w);
@@ -468,7 +482,7 @@ chart('c-intensity', () => {
   if (!sum(mod) && !sum(vig)) return null;
   const goal = last(SUM, s => s.intensityMinutes?.goal)[1] || 150;
   const o = opt({ xAxis: { type: 'category', data: weeks, axisLabel: { formatter: short } }, yAxis: { type: 'value' }, series: stack(['Moderati', 'Intensi ×2'], ['--s3', '--s2'], [mod, vig]) }, x => nf(x) + ' min');
-  o.series[1].markLine = { silent: true, symbol: 'none', lineStyle: { color: v('--text-2'), type: 'solid', width: 1 }, label: { formatter: `obiettivo ${goal}`, color: v('--text-2'), position: 'insideStartTop' }, data: [{ yAxis: goal }] };
+  o.series[1].markLine = { silent: true, symbol: 'none', lineStyle: { color: v('--ref'), type: 'dashed', width: 1 }, label: { formatter: `obiettivo ${goal}`, color: v('--text-2'), position: 'insideStartTop' }, data: [{ yAxis: goal }] };
   return o;
 });
 chart('c-kcal', () => {
@@ -479,7 +493,7 @@ chart('c-kcal', () => {
 chart('c-floors', () => {
   const f = col(SUM, s => s.movement?.floorsAscended?.value); if (!f.some(x => x)) return null;
   note('c-floors', `Media ${nf(avg(f), 1)} piani al giorno`);
-  return opt({ grid: { left: 4, right: 10, top: 10, bottom: 4, containLabel: true }, xAxis: dayAxis(), yAxis: { type: 'value' }, series: [{ ...BAR, name: 'Piani', data: f, itemStyle: { ...BAR.itemStyle, color: v('--s3') } }] }, x => nf(x));
+  return opt({ grid: { left: 4, right: 10, top: 10, bottom: 4, containLabel: true }, xAxis: dayAxis(), yAxis: { type: 'value' }, series: [{ ...BAR, name: 'Piani', data: f, itemStyle: { ...BAR.itemStyle, color: v('--accent') } }] }, x => nf(x));
 });
 
 // ---------- Corpo ----------
@@ -488,13 +502,13 @@ chart('c-weight', () => {
   if (!w.length) return null;
   const goal = (D.weightGoals?.userGoals || []).filter(g => g.goalValue).pop();
   note('c-weight', `${w.length} pesate dal ${fmtDay(new Date(w[0].date).toLocaleDateString('sv-SE'))}${goal ? ` · obiettivo ${nf(goal.goalValue / 1000, 1)} kg` : ''}`);
-  const s = lineS('Peso', w.map(x => [x.date, +(x.weight / 1000).toFixed(1)]), '--s1', { symbol: 'circle', symbolSize: 9, showSymbol: true, itemStyle: { color: v('--s1'), borderColor: v('--surface'), borderWidth: 2 } });
-  if (goal) s.markLine = { silent: true, symbol: 'none', lineStyle: { color: v('--s3'), type: 'solid', width: 1.5 }, label: { formatter: 'obiettivo', color: v('--text-2'), position: 'insideStartTop' }, data: [{ yAxis: goal.goalValue / 1000 }] };
+  const s = lineS('Peso', w.map(x => [x.date, +(x.weight / 1000).toFixed(1)]), '--accent', { symbol: 'circle', symbolSize: 9, showSymbol: true, itemStyle: { color: v('--accent'), borderColor: v('--surface'), borderWidth: 2 } });
+  if (goal) s.markLine = { silent: true, symbol: 'none', lineStyle: { color: v('--ref'), type: 'dashed', width: 1.5 }, label: { formatter: 'obiettivo', color: v('--text-2'), position: 'insideStartTop' }, data: [{ yAxis: goal.goalValue / 1000 }] };
   return opt({ xAxis: { type: 'time' }, yAxis: { type: 'value', scale: true, axisLabel: { formatter: x => x + ' kg' } }, series: [s] }, x => nf(x, 1) + ' kg');
 });
 function staticCards() {
   const fa = D.fitnessAge, c = fa?.components || {};
-  $('#fitage').innerHTML = fa ? `<div class="big-n">${nf(fa.fitnessAge, 1)} <small style="font-size:16px;font-weight:500;color:var(--text-2)">anni</small></div>
+  $('#fitage').innerHTML = fa ? `<div class="big-n">${nf(fa.fitnessAge, 1)} <small>anni</small></div>
     <div style="color:var(--text-2)">${nf(fa.chronologicalAge - fa.fitnessAge, 1)} anni in meno della tua età anagrafica (${fa.chronologicalAge})</div>
     <div class="facts"><div><b>${nf(c.rhr?.value)} bpm</b>FC a riposo</div><div><b>${nf(c.bmi?.value, 1)}</b>BMI</div><div><b>${nf(c.vigorousDaysAvg?.value, 1)}</b>giorni intensi / sett.</div><div><b>${nf(c.vigorousMinutesAvg?.value)} min</b>minuti intensi / sett.</div></div>`
     : '<p class="sub">Nessun dato</p>';
@@ -567,10 +581,10 @@ function renderDetail(a, det) {
   let marker = null;
   if (det.gps?.length > 1) {
     detailMap = L.map('d-map', { zoomControl: false, scrollWheelZoom: false, dragging: !L.Browser.mobile });  // su telefono un dito scorre la pagina, due zoomano
-    L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_${isDark() ? 'Dark' : 'Light'}_Gray_Base/MapServer/tile/{z}/{y}/{x}`, { attribution: 'Tiles © Esri', maxZoom: 16 }).addTo(detailMap);
-    const line = L.polyline(det.gps, { color: v('--s1'), weight: 4, opacity: .9 }).addTo(detailMap);
+    L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}`, { attribution: 'Tiles © Esri', maxZoom: 16 }).addTo(detailMap);
+    const line = L.polyline(det.gps, { color: v('--accent'), weight: 4, opacity: .95 }).addTo(detailMap);
     const dot = (p, c) => L.circleMarker(p, { radius: 6, color: v('--surface'), weight: 2, fillColor: v(c), fillOpacity: 1 }).addTo(detailMap);
-    dot(det.gps[0], '--s3'); dot(det.gps[det.gps.length - 1], '--s8');
+    dot(det.gps[0], '--text-1'); dot(det.gps[det.gps.length - 1], '--s8');
     marker = L.circleMarker(det.gps[0], { radius: 7, color: v('--surface'), weight: 3, fillColor: v('--s2'), opacity: 0, fillOpacity: 0 }).addTo(detailMap);
     detailMap.fitBounds(line.getBounds(), { padding: [24, 24] });
   }
@@ -585,15 +599,15 @@ function renderDetail(a, det) {
         const unit = swim ? 100 : 1000;
         const p = smooth(R.spd.map(s => s > 0.5 ? unit / s : null));
         const sorted = p.filter(x => x != null).sort((x, y) => x - y), q = f => sorted[Math.floor((sorted.length - 1) * f)];
-        panels.push({ name: swim ? 'Passo /100m' : 'Passo /km', data: p, color: '--s1', inverse: true, min: Math.floor((q(.02) - 10) / 10) * 10, max: Math.ceil((q(.97) + 15) / 10) * 10, fmt: clock });
-      } else panels.push({ name: 'Velocità km/h', data: smooth(R.spd.map(s => s * 3.6)), color: '--s1', fmt: x => nf(x, 1) });
+        panels.push({ name: swim ? 'Passo /100m' : 'Passo /km', data: p, color: '--accent', inverse: true, min: Math.floor((q(.02) - 10) / 10) * 10, max: Math.ceil((q(.97) + 15) / 10) * 10, fmt: clock });
+      } else panels.push({ name: 'Velocità km/h', data: smooth(R.spd.map(s => s * 3.6)), color: '--accent', fmt: x => nf(x, 1) });
     }
     if (R.hr) panels.push({ name: 'FC bpm', data: R.hr, color: '--s8', fmt: x => nf(x) });
     if (R.alt && !swim) panels.push({ name: 'Quota m', data: R.alt, color: '--s3', fmt: x => nf(x), area: true });
     if (R.pwr && run) panels.push({ name: 'Potenza W', data: smooth(R.pwr), color: '--s7', fmt: x => nf(x) });
     const H = 130, el = $('#d-chart');
     el.style.height = panels.length * H + 30 + 'px';
-    const c = echarts.init(el, 'g');
+    const c = echarts.init(el, 'g', { locale: 'IT' });
     c.setOption({
       animation: false,
       axisPointer: { link: [{ xAxisIndex: 'all' }], lineStyle: { color: v('--axis') } },
@@ -651,7 +665,7 @@ $('#q').addEventListener('input', actTable);
 // #attivita-<id> apre il dettaglio (link dal piano), ogni altro hash è una vista
 const route = () => { const m = location.hash.match(/^#attivita-(\d+)$/); m ? openActivity(+m[1]) : show(location.hash.slice(1)); };
 addEventListener('hashchange', route);
-initTheme(() => { resetCharts(); render(); });
+registerTheme();
 setRange(RANGE); staticCards();
 show(location.hash.startsWith('#attivita-') ? 'panoramica' : location.hash.slice(1));
 if (location.hash.startsWith('#attivita-')) route();

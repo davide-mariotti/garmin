@@ -8,14 +8,14 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#18212b">
+<meta name="theme-color" content="#050706">
 <meta name="apple-mobile-web-app-title" content="Garmin">
 <link rel="stylesheet" href="app.css">
 <script src="common.js"></script>
 <script src="auth.js"></script>
 <style>
 .wiki { display: grid; gap: 36px; }
-.wiki h2 { margin: 0; font-size: 28px; font-weight: 800; font-stretch: 75%; line-height: 1.1; }
+.wiki h2 { margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -.035em; line-height: 1.1; }
 .sec-sub { margin: 4px 0 14px; color: var(--text-2); max-width: 75ch; }
 .cards { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); }
 .rule { display: flex; flex-direction: column; gap: 8px; scroll-margin-top: 90px; }
@@ -58,7 +58,6 @@
 <main class="main">
   <header class="top">
     <h1>Wiki<small>Come costruiamo i piani: regole, motivazioni e fonti</small></h1>
-    <button class="icon-btn" id="theme" title="Tema chiaro/scuro" aria-label="Cambia tema"></button>
   </header>
 
   <div class="wiki">
@@ -219,7 +218,7 @@ $('#dec').innerHTML = decisions.length ? decisions.map(d => `<article>
   </article>`).join('')
   : '<p class="sub" style="margin:0">Questo atleta non ha un piano gare. Per chi ce l’ha, qui c’è il registro delle scelte del piano: cosa è stato deciso, perché, con quali regole e fonti.</p>';
 renderSidebar('wiki', (D?.activities || [])[0]?.ownerFullName, D ? `Dati del ${new Date(D.generated).toLocaleString('it-IT', { dateStyle: 'medium', timeStyle: 'short' })}` : '');
-initTheme(() => {});
+registerTheme();
 if (location.hash) document.querySelector(location.hash)?.scrollIntoView();
 })();
 </script>

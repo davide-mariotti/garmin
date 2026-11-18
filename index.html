@@ -3,51 +3,81 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Garmin Dashboard</title>
+<title>Garmin · Davide Mariotti</title>
+<meta name="description" content="Dashboard di allenamento da Garmin Connect: corsa, sonno, recupero e piano gare. Privata, con un atleta demo aperto a tutti.">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#18212b">
+<meta name="theme-color" content="#050706">
 <meta name="apple-mobile-web-app-title" content="Garmin">
 <link rel="stylesheet" href="app.css">
-<script>try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch {}</script>
+<script src="common.js"></script>
 <style>
-.wrap { max-width: 920px; margin: 0 auto; padding: 72px 16px 48px; }
-.wrap h1 { margin: 0; font-size: 64px; font-weight: 800; font-stretch: 62%; line-height: .95; }
-.lead { color: var(--text-2); margin: 14px 0 32px; max-width: 60ch; }
-.athletes { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr)); }
+.bar { width: min(1100px, 100% - 2.5rem); margin-inline: auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+body { background: radial-gradient(70% 55% at 18% 0%, rgba(47,227,127,.09), transparent 70%) no-repeat, var(--page); }
+header.site { border-bottom: 1px solid var(--border); }
+header.site .bar { height: 64px; }
+header.site .logo { height: 26px; display: block; }
+.back { color: var(--muted); font-size: 14px; } .back:hover { color: var(--text-1); text-decoration: none; }
+.hero-i { padding: 88px 0 40px; }
+.hero-i h1 { margin: 14px 0 0; font-size: clamp(48px, 9vw, 104px); font-weight: 600; letter-spacing: -.055em; line-height: .92; }
+.hero-i h1 .serif { letter-spacing: -.01em; padding-right: .06em; }
+.hero-i .lead { margin: 22px 0 0; max-width: 58ch; color: var(--muted); font-size: clamp(16px, 1.6vw, 19px); line-height: 1.6; }
+.views { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+.views span { display: inline-flex; align-items: center; gap: 7px; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--border); background: rgba(255,255,255,.03); font: 450 11.5px var(--mono); color: var(--muted); }
+.views .ico { width: 14px; height: 14px; color: var(--accent); }
+.athletes { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); padding-bottom: 32px; }
 /* ogni atleta è un pettorale: le iniziali al posto del numero */
-.athlete { display: flex; flex-direction: column; gap: 4px; }
-.athlete .initials { font-size: 84px; font-weight: 800; font-stretch: 62%; line-height: .9; letter-spacing: .01em; }
-.athlete h2 { margin: 8px 0 0; font-size: 18px; font-weight: 650; }
-.athlete .what { color: var(--muted); font-size: 13.5px; }
-.links { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--grid); }
-.note { color: var(--muted); font-size: 13px; margin-top: 32px; }
-.note a { color: var(--text-2); }
-@media (max-width: 600px) { .wrap { padding-top: 40px; } .wrap h1 { font-size: 52px; } }
+.athlete { display: flex; flex-direction: column; gap: 6px; padding: 38px 26px 24px; }
+.athlete .chip { margin-bottom: 4px; }
+.athlete .initials { font-size: 112px; font-weight: 600; letter-spacing: -.07em; line-height: .85; margin: 12px 0 10px; padding-right: .05em; width: fit-content;
+  background: linear-gradient(100deg, var(--accent), var(--lime)); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 0 30px rgba(47,227,127,.2)); }
+.athlete.demo .initials { background: linear-gradient(100deg, var(--text-1), var(--faint)); -webkit-background-clip: text; background-clip: text; filter: none; }
+.athlete h2 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -.03em; }
+.athlete p { margin: 0; color: var(--muted); font-size: 14px; max-width: 42ch; }
+.links { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 22px; }
+footer.site { border-top: 1px solid var(--border); padding: 22px 0; font-size: 13px; color: var(--faint); margin-top: 48px; }
+footer.site .bar { flex-wrap: wrap; }
+@media (max-width: 600px) { .hero-i { padding: 56px 0 28px; } .athlete .initials { font-size: 92px; } }
 </style>
 </head>
 <body>
-<main class="wrap">
-  <h1>Garmin Dashboard</h1>
-  <p class="lead">Scegli l'atleta. Ogni dashboard è privata e si apre con l'account Google autorizzato. Per vedere come funziona senza account, apri l'atleta demo.</p>
+<header class="site"><div class="bar">
+  <a href="/" aria-label="Davide Mariotti, home" id="logo"></a>
+  <a class="back" href="/">&larr; Torna al sito</a>
+</div></header>
+
+<main class="bar" style="display:block">
+  <section class="hero-i">
+    <p class="kicker">Garmin · Allenamento</p>
+    <h1>Training <span class="serif grad">dashboard.</span></h1>
+    <p class="lead">Corsa, sonno, recupero e piano gare, presi ogni mattina da Garmin Connect. Le dashboard sono private e si aprono con l'account Google autorizzato. Per vedere com'è fatta senza account c'è l'atleta demo, con numeri finti e nessun login.</p>
+    <div class="views" id="views"></div>
+  </section>
   <div class="athletes" id="athletes"></div>
-  <p class="note">I dati si aggiornano ogni mattina da Garmin Connect. <a href="/">Torna al sito</a></p>
 </main>
+
+<footer class="site"><div class="bar">
+  <span>Dati da Garmin Connect, aggiornati ogni mattina. Non è un prodotto Garmin.</span>
+  <a href="https://ko-fi.com/Z0X32ATNHL">Offrimi un caffè</a>
+</div></footer>
+
 <script>
-// id = parametro ?a= usato da dashboard.html e piano.html (nome-cognome)
+// id = parametro ?a= usato dalle pagine (nome-cognome); sample = dati finti di sample.js, aperta a tutti
 const ATHLETES = [
-  { id: 'davide-mariotti', name: 'Davide Mariotti', plan: true },
-  { id: 'andrea-prosperi', name: 'Andrea Prosperi' },
-  { id: 'sample', name: 'Atleta Demo', demo: true },  // dati finti di sample.js, aperta a tutti
+  { id: 'davide-mariotti', name: 'Davide Mariotti', plan: true, what: 'Dashboard, piano gare, forza e analisi da gara a gara.' },
+  { id: 'sample', name: 'Atleta Demo', demo: true, what: 'Un anno di dati generati nel browser: si guarda tutto, non si tocca niente di vero.' },
 ];
+document.getElementById('logo').innerHTML = LOGO;
+document.getElementById('views').innerHTML = VIEWS.map(([id, label]) => `<span>${icon(id)}${label}</span>`).join('');
 document.getElementById('athletes').innerHTML = ATHLETES.map(a => `
-  <section class="card bib athlete">
+  <section class="card bib athlete${a.demo ? ' demo' : ''}">
+    <span class="chip" style="--c:var(${a.demo ? '--text-2' : '--accent'})">${a.demo ? 'Pubblica · dati finti' : 'Privata · accesso con Google'}</span>
     <span class="initials" aria-hidden="true">${a.name.split(' ').map(w => w[0]).join('')}</span>
-    <h2>${a.name}</h2><span class="what">${a.demo ? 'Dati di esempio, senza login' : a.plan ? 'Dashboard e piano gare' : 'Dashboard'}</span>
+    <h2>${a.name}</h2><p>${a.what}</p>
     <div class="links">
-      <a class="btn primary" href="dashboard.html?a=${a.id}">Apri la dashboard</a>
+      <a class="btn primary" href="dashboard.html?a=${a.id}">${a.demo ? 'Apri la demo' : 'Apri la dashboard'}</a>
       ${a.plan ? `<a class="btn" href="piano.html?a=${a.id}">Piano gare</a>` : ''}
     </div>
   </section>`).join('');

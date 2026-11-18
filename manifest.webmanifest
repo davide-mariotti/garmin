@@ -6,8 +6,8 @@
   "start_url": "/garmin/",
   "scope": "/garmin/",
   "display": "standalone",
-  "theme_color": "#18212b",
-  "background_color": "#e9ecf0",
+  "theme_color": "#050706",
+  "background_color": "#050706",
   "icons": [
     {
       "src": "/favicon.svg",
